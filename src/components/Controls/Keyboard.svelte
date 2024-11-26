@@ -8,6 +8,7 @@
 
 	// TODO: Improve keyboardDisabled
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
+	import { history } from '@sudoku/stores/history';
 
 	function handleKeyButton(num) {
 		if (!$keyboardDisabled) {
@@ -19,6 +20,8 @@
 				}
 				userGrid.set($cursor, 0);
 			} else {
+				const oldValue = $userGrid[$cursor.y][$cursor.x];
+				
 				if ($candidates.hasOwnProperty($cursor.x + ',' + $cursor.y)) {
 					candidates.clear($cursor);
 				}
@@ -37,6 +40,14 @@
 				}
 			} else {
 				strategy_display.clear();
+				
+				// 记录数字输入操作
+				history.push({
+					type: 'input',
+					position: { x: $cursor.x, y: $cursor.y },
+					oldValue,
+					newValue: num
+				});
 			}
 		}
 	}
@@ -71,51 +82,41 @@
 				cursor.move(1);
 				break;
 
-			case 'Backspace':
-			case 8:
-			case 'Delete':
-			case 46:
-				handleKeyButton(0);
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				handleKeyButton(parseInt(e.key));
 				break;
 
-			default:
-				if (e.key && e.key * 1 >= 0 && e.key * 1 < 10) {
-					handleKeyButton(e.key * 1);
-				} else if (e.keyCode - 48 >= 0 && e.keyCode - 48 < 10) {
-					handleKeyButton(e.keyCode - 48);
-				}
+			case '0':
+			case 'Backspace':
+			case 'Delete':
+				handleKeyButton(0);
 				break;
 		}
 	}
 </script>
 
-<svelte:window on:keydown={handleKey} /><!--on:beforeunload|preventDefault={e => e.returnValue = ''} />-->
+<svelte:window on:keydown={handleKey}/>
 
-<div class="keyboard-grid">
-
-	{#each Array(10) as _, keyNum}
-		{#if keyNum === 9}
-			<button class="btn btn-key" disabled={$keyboardDisabled} title="Erase Field" on:click={() => handleKeyButton(0)}>
-				<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-				</svg>
-			</button>
-		{:else}
-			<button class="btn btn-key" disabled={$keyboardDisabled} title="Insert {keyNum + 1}" on:click={() => handleKeyButton(keyNum + 1)}>
-				{keyNum + 1}
-			</button>
-		{/if}
+<div class="keyboard grid grid-cols-3 gap-2">
+	{#each Array(9) as _, i}
+		<button class="btn" disabled={$keyboardDisabled} on:click={() => handleKeyButton(i + 1)}>{i + 1}</button>
 	{/each}
-
 </div>
 
 <style>
-	.keyboard-grid {
-		@apply grid grid-rows-2 grid-cols-5 gap-3;
+	.keyboard {
+		@apply w-full;
 	}
 
-
-	.btn-key {
-		@apply py-4 px-0;
+	.btn {
+		@apply py-5;
 	}
 </style>

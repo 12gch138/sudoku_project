@@ -9,8 +9,11 @@
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
 	import { gamePaused } from '@sudoku/stores/game';
 	import {updateUserGridFromCoordinates,change_testgrid} from '@sudoku/stores/prompt';
+	import { history } from '@sudoku/stores/history';
 
 	$: hintsAvailable = $hints > 0;
+	$: canUndo = $history.past.length > 0;
+	$: canRedo = $history.future.length > 0;
 
 	function handleHint() {
 		if (hintsAvailable) {
@@ -18,7 +21,49 @@
 				candidates.clear($cursor);
 			}
 
+			const oldValue = $userGrid[$cursor.y][$cursor.x];
 			userGrid.applyHint($cursor);
+			const newValue = $userGrid[$cursor.y][$cursor.x];
+
+			// 记录操作历史
+			history.push({
+				type: 'hint',
+				position: { x: $cursor.x, y: $cursor.y },
+				oldValue,
+				newValue
+			});
+		}
+	}
+
+	function handleUndo() {
+		if (!$gamePaused && canUndo) {
+			const action = $history.past[$history.past.length - 1];
+			history.undo();
+			
+			// 根据操作类型执行撤销
+			switch (action.type) {
+				case 'hint':
+				case 'input':
+					userGrid.set({ x: action.position.x, y: action.position.y }, action.oldValue);
+					break;
+				// 可以添加其他类型的操作处理
+			}
+		}
+	}
+
+	function handleRedo() {
+		if (!$gamePaused && canRedo) {
+			const action = $history.future[0];
+			history.redo();
+			
+			// 根据操作类型执行重做
+			switch (action.type) {
+				case 'hint':
+				case 'input':
+					userGrid.set({ x: action.position.x, y: action.position.y }, action.newValue);
+					break;
+				// 可以添加其他类型的操作处理
+			}
 		}
 	}
 
@@ -35,20 +80,13 @@
 
 <div class="action-buttons space-x-3">
 
-	<button class="btn btn-round" disabled={$gamePaused} on:click={setter} title="Rewind">
-        <svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    	<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4a8 8 0 1 1-5.657 13.657" />
-</svg>
-    </button>
-
-	<button class="btn btn-round" disabled={$gamePaused} on:click={change} title="Undo">
+	<button class="btn btn-round" disabled={$gamePaused || !canUndo} on:click={handleUndo} title="Undo">
 		<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
 		</svg>
 	</button>
 
-
-	<button class="btn btn-round" disabled={$gamePaused} title="Redo">
+	<button class="btn btn-round" disabled={$gamePaused || !canRedo} on:click={handleRedo} title="Redo">
 		<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 90 00-8 8v2M21 10l-6 6m6-6l-6-6" />
 		</svg>
@@ -81,7 +119,6 @@
 	</button>
 
 </div>
-
 
 <style>
 	.action-buttons {
