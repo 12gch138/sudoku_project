@@ -8,7 +8,7 @@
 
 	// TODO: Improve keyboardDisabled
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
-	import { history } from '@sudoku/stores/history';
+	import { history } from '../stores/history';
 
 	function handleKeyButton(num) {
 		if (!$keyboardDisabled) {
