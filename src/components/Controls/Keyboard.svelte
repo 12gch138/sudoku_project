@@ -4,7 +4,7 @@
 	import { notes } from '@sudoku/stores/notes';
 	import { candidates } from '@sudoku/stores/candidates';
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
-	import { history } from '@sudoku/stores/history';
+	import { history } from '../stores/history';
 
 	function handleKeyButton(num) {
 		if (!$keyboardDisabled) {

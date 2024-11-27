@@ -7,7 +7,7 @@
 	import { settings } from '@sudoku/stores/settings';
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
 	import { gamePaused } from '@sudoku/stores/game';
-	import { history } from '@sudoku/stores/history';
+	import { history } from '../../stores/history';
 
 	$: hintsAvailable = $hints > 0;
 	$: canUndo = $history.past.length > 0;
