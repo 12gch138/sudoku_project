@@ -25,7 +25,7 @@
 					if (currentCandidates.includes(num)) {
 						// 如果是移除已有的候选数
 						const newCandidates = currentCandidates.filter(n => n !== num);
-						candidates.set($cursor, newCandidates);
+						candidates.add($cursor, newCandidates);
 						history.updateBranchPointCandidates(position, newCandidates);
 					} else {
 						// 添加新的候选数
@@ -34,11 +34,12 @@
 						candidates.add($cursor, num);
 						// 等待一下确保候选数已经更新
 						setTimeout(() => {
-							history.addBranchPoint(position, newCandidates);
+							history.addBranchPoint(position, [num]);
 						}, 0);
 					}
 				}
 				userGrid.set($cursor, 0);
+				
 			} else {
 				const oldValue = $userGrid[$cursor.y][$cursor.x];
 				const position = $cursor.x + ',' + $cursor.y;
