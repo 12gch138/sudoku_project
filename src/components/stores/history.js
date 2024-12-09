@@ -55,8 +55,11 @@ function createHistoryStore() {
                 // 遍历并恢复每个位置的候选数
                 Object.entries(snapshot.candidates).forEach(([position, nums]) => {
                     if (nums && nums.length > 0) {
-                        const [x, y] = position.split(',').map(Number);
-                        candidates.set({ x, y }, nums);
+                        const [x, y] = position.split(',').map(Number); 
+                        
+                        nums.forEach(num => {
+                            candidates.add({ x, y }, num);
+                        });
                     }
                 });
             }
