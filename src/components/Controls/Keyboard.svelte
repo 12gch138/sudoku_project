@@ -9,21 +9,43 @@
 	// TODO: Improve keyboardDisabled
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
 	import { history } from '../stores/history';
+	import { get } from 'svelte/store';
 
 	function handleKeyButton(num) {
 		if (!$keyboardDisabled) {
 			if ($notes) {
+				const position = $cursor.x + ',' + $cursor.y;
+				const currentCandidates = $candidates[position] || [];
+
 				if (num === 0) {
+					// 清除候选数时，移除该位置的所有分支点
 					candidates.clear($cursor);
+					history.removeBranchPointsByPosition(position);
 				} else {
-					candidates.add($cursor, num);
+					if (currentCandidates.includes(num)) {
+						// 如果是移除已有的候选数
+						const newCandidates = currentCandidates.filter(n => n !== num);
+						candidates.set($cursor, newCandidates);
+						history.updateBranchPointCandidates(position, newCandidates);
+					} else {
+						// 添加新的候选数
+						const newCandidates = [...currentCandidates, num].sort((a, b) => a - b);
+						candidates.add($cursor, num);
+						
+						// 等待一下确保候选数已经更新
+						setTimeout(() => {
+							history.addBranchPoint(position, newCandidates);
+						}, 0);
+					}
 				}
 				userGrid.set($cursor, 0);
 			} else {
 				const oldValue = $userGrid[$cursor.y][$cursor.x];
+				const position = $cursor.x + ',' + $cursor.y;
 				
-				if ($candidates.hasOwnProperty($cursor.x + ',' + $cursor.y)) {
+				if ($candidates.hasOwnProperty(position)) {
 					candidates.clear($cursor);
+					history.removeBranchPointsByPosition(position);
 				}
 
 				userGrid.set($cursor, num);
