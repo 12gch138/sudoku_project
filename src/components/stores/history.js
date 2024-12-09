@@ -18,11 +18,51 @@ function createHistoryStore() {
     // 创建当前状态的快照
     function createSnapshot() {
         const gridState = get(userGrid);
-        const candidatesState = {...get(candidates)};
+        const candidatesState = get(candidates);
+        
         return {
             grid: JSON.parse(JSON.stringify(gridState)),
-            candidates: candidatesState
+            candidates: JSON.parse(JSON.stringify(candidatesState))
         };
+    }
+
+    // 恢复快照
+    function restoreSnapshot(snapshot) {
+        if (!snapshot) return;
+        
+        try {
+            // 恢复数独格子状态
+            if (snapshot.grid) {
+                // 遍历网格并设置每个单元格的值
+                for (let y = 0; y < snapshot.grid.length; y++) {
+                    for (let x = 0; x < snapshot.grid[y].length; x++) {
+                        userGrid.set({ x, y }, snapshot.grid[y][x]);
+                    }
+                }
+            }
+            
+            // 恢复候选数状态
+            if (snapshot.candidates) {
+                // 先清除所有候选数
+                for (let y = 0; y < snapshot.grid.length; y++) {
+                    for (let x = 0; x < snapshot.grid[y].length; x++) {
+                        // userGrid.set({ x, y }, snapshot.grid[y][x]);
+                        candidates.clear({ x, y });
+                    }
+                }
+                
+                
+                // 遍历并恢复每个位置的候选数
+                Object.entries(snapshot.candidates).forEach(([position, nums]) => {
+                    if (nums && nums.length > 0) {
+                        const [x, y] = position.split(',').map(Number);
+                        candidates.set({ x, y }, nums);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error restoring snapshot:', error);
+        }
     }
 
     return {
@@ -54,6 +94,7 @@ function createHistoryStore() {
 
             // 保存当前状态的快照
             const snapshot = createSnapshot();
+            console.log('Creating branch point snapshot:', snapshot); // 调试日志
 
             return {
                 ...state,
@@ -69,28 +110,36 @@ function createHistoryStore() {
         selectBranch: (branchId) => update(state => {
             const branch = state.branchPoints.find(b => b.id === branchId);
             if (!branch || !branch.isActive || branch.visitCount >= 2) {
+                console.log('Branch not selectable:', { branch, branchId }); // 调试日志
                 return state;
             }
 
-            // 恢复该分支点的状态
-            const snapshot = state.snapshots[branchId];
-            if (snapshot) {
-                userGrid.set(snapshot.grid);
-                candidates.set({...snapshot.candidates});
+            try {
+                // 恢复该分支点的状态
+                const snapshot = state.snapshots[branchId];
+                console.log('Restoring snapshot:', snapshot); // 调试日志
+                restoreSnapshot(snapshot);
+
+                // 更新分支点的访问次数
+                const updatedBranchPoints = state.branchPoints.map(b => 
+                    b.id === branchId 
+                        ? { 
+                            ...b, 
+                            visitCount: b.visitCount + 1, 
+                            isActive: b.visitCount < 1 
+                        }
+                        : b
+                );
+
+                return {
+                    ...state,
+                    branchPoints: updatedBranchPoints,
+                    currentBranch: branch.visitCount < 1 ? branch : null
+                };
+            } catch (error) {
+                console.error('Error in selectBranch:', error);
+                return state;
             }
-
-            // 更新分支点的访问次数
-            const updatedBranchPoints = state.branchPoints.map(b => 
-                b.id === branchId 
-                    ? { ...b, visitCount: b.visitCount + 1, isActive: b.visitCount < 1 }
-                    : b
-            );
-
-            return {
-                ...state,
-                branchPoints: updatedBranchPoints,
-                currentBranch: branch.visitCount < 1 ? branch : null
-            };
         }),
         // 标记分支点已完成
         completeBranch: (branchId) => update(state => {

@@ -28,6 +28,13 @@
         if (branch.visitCount === 1) return 'visited';
         return 'available';
     }
+
+    // 处理分支点点击
+    function handleBranchClick(branch) {
+        if (!branch.isActive || branch.visitCount >= 2) return;
+        
+        history.selectBranch(branch.id);
+    }
 </script>
 
 <div class="branch-points-container">
@@ -46,7 +53,7 @@
                      class:disabled={!branch.isActive || branch.visitCount >= 2}
                      class:clickable={branch.isActive && branch.visitCount < 2}
                      transition:slide
-                     on:click={() => history.selectBranch(branch.id)}>
+                     on:click={() => handleBranchClick(branch)}>
                     <div class="branch-header">
                         <span class="position">{formatPosition(branch.position)}</span>
                         <span class="time">{formatTime(branch.timestamp)}</span>
@@ -60,6 +67,11 @@
                             <span class="click-hint">点击回溯</span>
                         {/if}
                     </div>
+                    {#if branch.visitCount > 0}
+                        <div class="visit-count">
+                            已访问 {branch.visitCount} 次
+                        </div>
+                    {/if}
                 </div>
             {/each}
         </div>
@@ -142,6 +154,10 @@
 
     .click-hint {
         @apply text-xs text-primary-dark font-medium;
+    }
+
+    .visit-count {
+        @apply text-xs text-gray-500 mt-1;
     }
 
     .status-available {
