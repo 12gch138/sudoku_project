@@ -86,6 +86,7 @@ function createHistoryStore() {
         // 添加分支点
         addBranchPoint: (position, candidatesList) => update(state => {
             const id = Date.now();
+            console.log('branch point',position)
             const newBranchPoint = {
                 id,
                 position,
@@ -174,10 +175,11 @@ function createHistoryStore() {
             };
         }),
         // 更新指定位置的分支点候选数
-        updateBranchPointCandidates: (position, candidatesList) => update(state => {
+        updateBranchPointCandidates: (position, candidatesList, num) => update(state => {
             const updatedBranchPoints = state.branchPoints.map(branch => {
-                if (branch.position === position) {
+                if (branch.position === position && branch.candidates[0] === num) {
                     // 如果没有候选数了，标记为非活动
+                    return { ...branch, isActive: false };
                     if (candidatesList.length === 0) {
                         return { ...branch, isActive: false };
                     }

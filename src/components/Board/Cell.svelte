@@ -44,7 +44,7 @@
 
 			<button class="cell-btn" on:click={cursor.set(cellX - 1, cellY - 1)}>
 				{#if candidates}
-					<Candidates {candidates} />
+					<Candidates {candidates} {cellX} {cellY} />
 				{:else}
 					<span class="cell-text">{value || ''}</span>
 				{/if}

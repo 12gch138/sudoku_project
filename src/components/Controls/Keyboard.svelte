@@ -25,8 +25,8 @@
 					if (currentCandidates.includes(num)) {
 						// 如果是移除已有的候选数
 						const newCandidates = currentCandidates.filter(n => n !== num);
-						candidates.add($cursor, newCandidates);
-						history.updateBranchPointCandidates(position, newCandidates);
+						candidates.add($cursor, num);
+						history.updateBranchPointCandidates(position, newCandidates, num);
 					} else {
 						// 添加新的候选数
 						

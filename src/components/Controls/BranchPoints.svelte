@@ -37,7 +37,7 @@
     }
 </script>
 
-<div class="branch-points-container">
+<!-- <div class="branch-points-container">
     <h3 class="title">分支点 ({$history.branchPoints.length})</h3>
     
     {#if $history.branchPoints.length === 0}
@@ -76,7 +76,7 @@
             {/each}
         </div>
     {/if}
-</div>
+</div> -->
 
 <style>
     .branch-points-container {
