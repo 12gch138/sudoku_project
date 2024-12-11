@@ -1,6 +1,6 @@
 <script>
 	import game from '@sudoku/game';
-	import { validateSencode } from '@sudoku/sencode';
+	import { validateSencode, validateUrl } from '@sudoku/sencode';
 	import { modal } from '@sudoku/stores/modal';
 	import { slide, fade } from 'svelte/transition';
 	import { DIFFICULTIES, DROPDOWN_DURATION, DIFFICULTY_CUSTOM } from '@sudoku/constants';
@@ -55,6 +55,23 @@
 		});
 	}
 
+	function handleEnterUrl() {
+		dropdownVisible = false;
+		game.pause();
+
+		modal.show('prompt', {
+			title: 'Enter Url',
+			text: 'Please enter the url:',
+			fontMono: true,
+			button: 'Start',
+			onHide: game.resume,
+			callback: (value) => {
+				game.startUrl(value);
+			},
+			validate: validateUrl
+		});
+	}
+
 	function showDropdown() {
 		dropdownVisible = true;
 		game.pause();
@@ -105,6 +122,15 @@
 				</svg>
 
 				<span class="align-middle">Enter Code</span>
+			</a>
+
+			<a class="dropdown-item" on:click|preventDefault={handleEnterUrl} href="/enter-code" title="Enter a url">
+				<svg class="icon-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+					<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+					<path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+				</svg>
+
+				<span class="align-middle">Enter Url</span>
 			</a>
 		</div>
 	{/if}

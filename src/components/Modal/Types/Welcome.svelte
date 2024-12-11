@@ -1,7 +1,7 @@
 <script>
 	import { difficulty as difficultyStore } from '@sudoku/stores/difficulty';
-	import { startNew, startCustom } from '@sudoku/game';
-	import { validateSencode } from '@sudoku/sencode';
+	import { startNew, startCustom, startUrl } from '@sudoku/game';
+	import { validateSencode, validateUrl } from '@sudoku/sencode';
 	import { DIFFICULTIES } from '@sudoku/constants';
 
 	export let data = {};
@@ -9,13 +9,18 @@
 
 	let difficulty = $difficultyStore;
 	let sencode = data.sencode || '';
+	let url = data.url || '';
 
 	$: enteredSencode = sencode.trim().length !== 0;
-	$: buttonDisabled = enteredSencode ? !validateSencode(sencode) : !DIFFICULTIES.hasOwnProperty(difficulty);
+	$: enteredUrl = url.trim().length !== 0;
+	$: buttonDisabled1 = enteredSencode ? !validateSencode(sencode) : !DIFFICULTIES.hasOwnProperty(difficulty);
+	$: buttonDisabled2 = enteredUrl ? !validateUrl(url) : !DIFFICULTIES.hasOwnProperty(difficulty);
 
 	function handleStart() {
-		if (validateSencode(sencode)) {
+		if (enteredSencode && validateSencode(sencode)) {
 			startCustom(sencode);
+		}else if (enteredUrl && validateUrl(url)){
+			startUrl(url);
 		} else {
 			startNew(difficulty);
 		}
@@ -52,6 +57,10 @@
 
 <input id="sencode" class="input font-mono mb-5" bind:value={sencode} type="text">
 
+<label for="urlInput" class="text-lg mb-3">Or, if you have a url, enter it here:</label>
+
+<input id="urlInput" class="input font-mono mb-5" bind:value={url} type="text">
+
 <div class="flex justify-end">
-	<button class="btn btn-small btn-primary" disabled={buttonDisabled} on:click={handleStart}>Start</button>
+	<button class="btn btn-small btn-primary" disabled={buttonDisabled1 || buttonDisabled2} on:click={handleStart}>Start</button>
 </div>
