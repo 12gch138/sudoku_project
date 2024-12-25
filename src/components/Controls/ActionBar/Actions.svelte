@@ -4,6 +4,7 @@
 	import { cursor } from '@sudoku/stores/cursor';
 	import { hints } from '@sudoku/stores/hints';
 	import { notes } from '@sudoku/stores/notes';
+	import { strategy_buttom } from '@sudoku/stores/strategy_buttom';
 	import { settings } from '@sudoku/stores/settings';
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
 	import { gamePaused } from '@sudoku/stores/game';
@@ -12,7 +13,9 @@
 
 	function handleHint() {
 		if (hintsAvailable) {
-			candidates.update(userGrid.getMatrix());
+			if ($candidates.hasOwnProperty($cursor.x + ',' + $cursor.y)) {
+				candidates.clear($cursor);
+			}
 
 			userGrid.applyHint($cursor);
 		}
@@ -49,6 +52,14 @@
 		</svg>
 
 		<span class="badge tracking-tighter" class:badge-primary={$notes}>{$notes ? 'ON' : 'OFF'}</span>
+	</button>
+
+	<button class="btn btn-round btn-badge" on:click={strategy_buttom.toggle} title="strategy ({$strategy_buttom ? 'ON' : 'OFF'})">
+		<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+		</svg>
+
+		<span class="badge tracking-tighter" class:badge-primary={$strategy_buttom}>{$strategy_buttom ? 'ON' : 'OFF'}</span>
 	</button>
 
 </div>

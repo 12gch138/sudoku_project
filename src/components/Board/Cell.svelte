@@ -3,11 +3,15 @@
 	import { fade } from 'svelte/transition';
 	import { SUDOKU_SIZE } from '@sudoku/constants';
 	import { cursor } from '@sudoku/stores/cursor';
+	import strategy from "./Strategy.svelte"
+    import { strategy_display } from '@sudoku/stores/strategy_display';
+    import Strategy from './Strategy.svelte';
 
 	export let value;
 	export let cellX;
 	export let cellY;
 	export let candidates;
+	export let strategy_candidates;
 
 	export let disabled;
 	export let conflictingNumber;
@@ -34,7 +38,9 @@
 		     class:selected={selected}
 		     class:same-area={sameArea}
 		     class:same-number={sameNumber}
+			 class:strategy={strategy_candidates}
 		     class:conflicting-number={conflictingNumber}>
+			 
 
 			<button class="cell-btn" on:click={cursor.set(cellX - 1, cellY - 1)}>
 				{#if candidates}
@@ -50,6 +56,7 @@
 </div>
 
 <style>
+	
 	.cell {
 		@apply h-full w-full row-end-auto col-end-auto;
 	}
@@ -118,5 +125,8 @@
 
 	.conflicting-number {
 		@apply text-red-600;
+	}
+	.strategy {
+		background : #32CD32;
 	}
 </style>

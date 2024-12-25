@@ -5,6 +5,8 @@
 	import { settings } from '@sudoku/stores/settings';
 	import { cursor } from '@sudoku/stores/cursor';
 	import { candidates } from '@sudoku/stores/candidates';
+	import { strategy_display } from "@sudoku/stores/strategy_display"
+
 	import Cell from './Cell.svelte';
 
 	function isSelected(cursorStore, x, y) {
@@ -43,6 +45,7 @@
 					      cellY={y + 1}
 					      cellX={x + 1}
 					      candidates={$candidates[x + ',' + y]}
+						  strategy_candidates={[y + ',' + x] in $strategy_display}
 					      disabled={$gamePaused}
 					      selected={isSelected($cursor, x, y)}
 					      userNumber={$grid[y][x] === 0}

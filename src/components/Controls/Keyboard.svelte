@@ -3,6 +3,8 @@
 	import { cursor } from '@sudoku/stores/cursor';
 	import { notes } from '@sudoku/stores/notes';
 	import { candidates } from '@sudoku/stores/candidates';
+	import {strategy_buttom} from '@sudoku/stores/strategy_buttom'
+	import {strategy_display} from '@sudoku/stores/strategy_display'
 
 	// TODO: Improve keyboardDisabled
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
@@ -22,6 +24,18 @@
 				}
 
 				userGrid.set($cursor, num);
+			}
+
+			if ($strategy_buttom) {
+				strategy_display.update(userGrid.getMatrix());
+				$strategy_display => {
+					for (let key in strategy_display) {
+						const pos = {y: key.split(',')[0], x: key.split(',')[1]}
+						userGrid.set(key.split(','), strategy_display[key]);
+					}
+				}
+			} else {
+				strategy_display.clear();
 			}
 		}
 	}
