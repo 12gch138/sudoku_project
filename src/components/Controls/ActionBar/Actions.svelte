@@ -12,9 +12,7 @@
 
 	function handleHint() {
 		if (hintsAvailable) {
-			if ($candidates.hasOwnProperty($cursor.x + ',' + $cursor.y)) {
-				candidates.clear($cursor);
-			}
+			candidates.update(userGrid.getMatrix());
 
 			userGrid.applyHint($cursor);
 		}
