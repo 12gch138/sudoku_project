@@ -15,7 +15,7 @@
 	export let selected;
 	export let sameArea;
 	export let sameNumber;
-
+	export let isGreen;
 	const borderRight = (cellX !== SUDOKU_SIZE && cellX % 3 !== 0);
 	const borderRightBold = (cellX !== SUDOKU_SIZE && cellX % 3 === 0);
 	const borderBottom = (cellY !== SUDOKU_SIZE && cellY % 3 !== 0);
@@ -31,6 +31,7 @@
 	{#if !disabled}
 		<div class="cell-inner"
 		     class:user-number={userNumber}
+			 class:green-cell={isGreen}
 		     class:selected={selected}
 		     class:same-area={sameArea}
 		     class:same-number={sameNumber}
@@ -53,7 +54,6 @@
 	.cell {
 		@apply h-full w-full row-end-auto col-end-auto;
 	}
-
 	.cell-inner {
 		@apply relative h-full w-full text-gray-800;
 	}
@@ -107,7 +107,6 @@
 	.selected {
 		@apply bg-primary text-white;
 	}
-
 	.same-area {
 		@apply bg-primary-lighter;
 	}
@@ -118,5 +117,9 @@
 
 	.conflicting-number {
 		@apply text-red-600;
+	}
+	.green-cell{
+		background-color: green;  /* 背景颜色为绿色 */
+        color: black;
 	}
 </style>
