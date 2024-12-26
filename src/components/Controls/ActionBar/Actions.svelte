@@ -8,7 +8,7 @@
 	import { settings } from '@sudoku/stores/settings';
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
 	import { gamePaused } from '@sudoku/stores/game';
-	import {updateUserGridFromCoordinates} from '@sudoku/stores/prompt';
+	import {updateUserGridFromCoordinates, updataCandidates, updateTest} from '@sudoku/stores/prompt';
 
 	$: hintsAvailable = $hints > 0;
 
@@ -23,6 +23,8 @@
 	}
 
 	function setter(){
+		updataCandidates();
+		updateTest();
 		iscandidates.update(value=>true);
 		updateUserGridFromCoordinates();
 
