@@ -1,7 +1,7 @@
 // 对应策略逻辑有误，待修改
 import { box_line_reduction_strategy } from '@sudoku/strategy/box_reduction.js';
 import { basic_startegy } from '@sudoku/strategy/basic.js';
-import { manager } from '@sudoku/strategy/strategy.js';
+import { manager } from '@sudoku/strategy/strategy_manager.js';
 import { naked_pairs_strategy } from '@sudoku/strategy/naked_pairs.js';
 import { naked_triple_strategy } from '@sudoku/strategy/naked_triple.js';
 import { naked_quad_strategy } from '@sudoku/strategy/naked_quad.js';
@@ -81,14 +81,14 @@ function printCandidateDifferences(differences) {
 
 describe('Box_Line_Reduction_Strategy', () => {
     // 跳过测试，待修改
-    test.skip('应从行中消除候选数', () => {
+    test('应从行中消除候选数', () => {
         const inputString = 
             "017903600000080000900000507072010430000402070064370250701000065000030000005601720";
         
         const board = stringToMatrix(inputString);
         
         // 打印初始盘面
-        console.log('\n初始盘面：');
+        //console.log('\n初始盘面：');
         //printBoard(board);
 
         // 初始化候选数
@@ -102,8 +102,9 @@ describe('Box_Line_Reduction_Strategy', () => {
         console.log('\n初始候选数：');
         //printCandidates(candidates);
         
+        manager.addStrategy(box_line_reduction_strategy)
         // 应用策略
-        const updatedCandidates = box_line_reduction_strategy.get_candidate(candidates);
+        const updatedCandidates = manager.executeStrategies(candidates);
         
         // 找出候选数的变化
         const differences = findCandidateDifferences(candidates, updatedCandidates);

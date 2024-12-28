@@ -1,9 +1,10 @@
 import { basic_startegy } from '@sudoku/strategy/basic.js';
-import { manager } from '@sudoku/strategy/strategy.js';
+import { manager } from '@sudoku/strategy/strategy_manager.js';
 import { naked_pairs_strategy } from '@sudoku/strategy/naked_pairs.js';
 import { naked_triple_strategy } from '@sudoku/strategy/naked_triple.js';
 import { naked_quad_strategy } from '@sudoku/strategy/naked_quad.js';
 import { hidden_pairs_strategy } from '@sudoku/strategy/hidden_pairs.js';
+import { x_wing_strategy } from '@sudoku/strategy/fish.js';
 
 // const sudokuString = "080090030030000069902063158020804590851907045394605870563040987200000015010050020";
 // const sudokuString_naked_triple = "294513006600842319300697254000056000040080060000470000730164005900735001400928637";
@@ -16,6 +17,22 @@ test('multi strategy', () => {
     manager.addStrategy(naked_triple_strategy)
     manager.addStrategy(naked_quad_strategy)
     manager.addStrategy(hidden_pairs_strategy)
+    let candidates = manager.executeStrategies(matrix);
+
+    console.log(candidates);
+
+    //expect(result).toBe(true);
+});
+
+test('x_wing strategy', () => {
+    const matrix = stringToMatrix("100000569402000008050009040000640801000010000208035000040500010900000402621000005");
+    manager.addStrategy(naked_pairs_strategy)
+    manager.addStrategy(basic_startegy)
+    manager.addStrategy(naked_triple_strategy)
+    manager.addStrategy(naked_quad_strategy)
+    manager.addStrategy(hidden_pairs_strategy)
+    manager.addStrategy(x_wing_strategy)
+
     let candidates = manager.executeStrategies(matrix);
 
     console.log(candidates);
