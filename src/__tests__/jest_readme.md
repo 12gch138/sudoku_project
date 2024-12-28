@@ -20,4 +20,6 @@ npm test -- -t 'multi strategy'
 
 后续需要为每个单元测试添加期望输出(`expect`函数)
 
-对于单个策略的有效性测试可能借用`findCandidateDifferences`等函数检测比较方便，待完成
+存储测试数据`test-data.js`
+
+一些常用函数`test-utils.js`

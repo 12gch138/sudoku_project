@@ -1,6 +1,6 @@
 // 对应策略逻辑有误，待修改
 import { box_line_reduction_strategy } from '@sudoku/strategy/box_reduction.js';
-import { basic_startegy } from '@sudoku/strategy/basic.js';
+import { basic_strategy } from '@sudoku/strategy/basic.js';
 import { manager } from '@sudoku/strategy/strategy_manager.js';
 import { naked_pairs_strategy } from '@sudoku/strategy/naked_pairs.js';
 import { naked_triple_strategy } from '@sudoku/strategy/naked_triple.js';
@@ -92,9 +92,9 @@ describe('Box_Line_Reduction_Strategy', () => {
         //printBoard(board);
 
         // 初始化候选数
-        //let candidates = basic_startegy.get_candidate(board);
+        //let candidates = basic_strategy.get_candidate(board);
         manager.addStrategy(naked_pairs_strategy)
-        manager.addStrategy(basic_startegy)
+        manager.addStrategy(basic_strategy)
         manager.addStrategy(naked_triple_strategy)
         manager.addStrategy(naked_quad_strategy)
         manager.addStrategy(hidden_pairs_strategy)
@@ -129,7 +129,7 @@ describe('Box_Line_Reduction_Strategy', () => {
     //     console.log('\n初始盘面：');
     //     printBoard(board);
 
-    //     let candidates = basic_startegy.get_candidate(board);
+    //     let candidates = basic_strategy.get_candidate(board);
     //     const updatedCandidates = box_line_reduction_strategy.get_candidate(board);
         
     //     console.log('\n更新后的候选数：');
