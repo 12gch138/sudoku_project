@@ -119,7 +119,6 @@
 		@apply text-red-600;
 	}
 	.green-cell{
-		background-color: green;  /* 背景颜色为绿色 */
-        color: black;
+		background-color: lightgreen;  /* 背景颜色为绿色 */
 	}
 </style>

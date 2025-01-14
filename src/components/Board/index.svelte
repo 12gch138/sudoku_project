@@ -55,7 +55,7 @@
 					      disabled={$gamePaused}
 					      selected={isSelected($cursor, x, y)}
 					      userNumber={$grid[y][x] === 0}
-						  isGreen={is_candidates && isGreen(x,y)&&$promptCoordinates}
+						  isGreen={is_candidates && isGreen(x,y) && $promptCoordinates && !isSelected($cursor, x, y) && $promptGrid[y][x]===0}
 					      sameArea={$settings.highlightCells && !isSelected($cursor, x, y) && isSameArea($cursor, x, y)}
 					      sameNumber={$settings.highlightSame && value && !isSelected($cursor, x, y) && getValueAtCursor($userGrid, $cursor) === value}
 					      conflictingNumber={$settings.highlightConflicting && $grid[y][x] === 0 && $invalidCells.includes(x + ',' + y)} />
