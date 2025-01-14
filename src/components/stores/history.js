@@ -86,7 +86,7 @@ function createHistoryStore() {
         // 添加分支点
         addBranchPoint: (position, candidatesList) => update(state => {
             const id = Date.now();
-            console.log('branch point',position)
+            console.log('branch point',position,candidatesList)
             const newBranchPoint = {
                 id,
                 position,
@@ -228,7 +228,44 @@ function createHistoryStore() {
             };
         }),
         // 清空历史记录
-        clear: () => set(initialState)
+        clear: () => set(initialState),
+        // 跳转到最新分支点
+        jumpToLatestBranch: () => update(state => {
+            if (state.branchPoints.length === 0) return state;
+            
+            // 获取最新的活动分支点
+            const latestBranch = [...state.branchPoints]
+                .reverse()
+                .find(branch => branch.isActive);
+            
+            if (!latestBranch) return state;
+            
+            try {
+                // 恢复该分支点的状态
+                const snapshot = state.snapshots[latestBranch.id];
+                restoreSnapshot(snapshot);
+
+                // 更新分支点的访问次数并标记为不可用
+                const updatedBranchPoints = state.branchPoints.map(b => 
+                    b.id === latestBranch.id 
+                        ? { 
+                            ...b, 
+                            visitCount: b.visitCount + 1,
+                            isActive: false // 直接标记为不可用
+                        }
+                        : b
+                );
+
+                return {
+                    ...state,
+                    branchPoints: updatedBranchPoints,
+                    currentBranch: null // 由于分支已标记为不可用，所以currentBranch也设为null
+                };
+            } catch (error) {
+                console.error('Error in jumpToLatestBranch:', error);
+                return state;
+            }
+        })
     };
 }
 

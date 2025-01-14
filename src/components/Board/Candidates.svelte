@@ -1,6 +1,8 @@
 <script>
 	import { CANDIDATE_COORDS } from '@sudoku/constants';
 	import { history } from '../stores/history';
+	import { userGrid } from '@sudoku/stores/grid';
+	import { candidates as candidatesStore } from '@sudoku/stores/candidates';
 
 	export let candidates = [];
 	export let cellX;
@@ -16,11 +18,11 @@
 		);
 	}
 
-	function handleCandidateClick(event, num) {
+	function handleCandidateClick(event, num, isExhausted) {
 		// 从点击的候选值元素向上查找到格子元素
 		const cellElement = event.target.closest('.cell');
 		if (!cellElement) return;
-		
+		if (isExhausted) return;
 		// 从类名中提取行和列位置
 		const rowMatch = cellElement.className.match(/row-start-(\d+)/);
 		const colMatch = cellElement.className.match(/col-start-(\d+)/);
@@ -32,16 +34,29 @@
 		
 		const position = col + ',' + row;
 		console.log('position',position)
-		const branchPoint = $history.branchPoints.find(b => 
-			b.position === position && 
-			b.candidates.includes(num) && 
-			b.isActive && 
-			b.visitCount < 2
-		);
+		// const branchPoint = $history.branchPoints.find(b => 
+		// 	b.position === position && 
+		// 	b.candidates.includes(num) && 
+		// 	b.isActive && 
+		// 	b.visitCount < 2
+		// );
 		
-		if (branchPoint) {
-			history.selectBranch(branchPoint.id);
-		}
+		// if (branchPoint) {
+		// 	history.selectBranch(branchPoint.id);
+		// } 
+		history.addBranchPoint(position, [num]);
+		const oldValue = $userGrid[row][col];	
+		const currentCandidates = $candidatesStore[position] || [];
+		const oldCandidates = currentCandidates;
+		candidatesStore.clear({ x: col, y: row });
+		userGrid.set({ x: col, y: row }, num);
+		// 记录操作历史
+		history.push({
+			type: 'input',
+			position: { x: col, y: row },
+			oldValue,
+			newValue: num
+		});
 	}
 </script>
 
@@ -51,7 +66,7 @@
 			 class:invisible={!candidates.includes(index + 1)}
 			 class:visible={candidates.includes(index + 1)}
 			 class:exhausted={candidates.includes(index + 1) && isExhausted(index + 1)}
-			 on:click|stopPropagation={(event) => handleCandidateClick(event,index + 1)}>
+			 on:click|stopPropagation={(event) => handleCandidateClick(event,index + 1,isExhausted(index + 1))}>
 			{index + 1}
 		</div>
 	{/each}

@@ -14,6 +14,7 @@
 	$: hintsAvailable = $hints > 0;
 	$: canUndo = $history.past.length > 0;
 	$: canRedo = $history.future.length > 0;
+	$: hasActiveBranches = $history.branchPoints.some(branch => branch.isActive);
 
 	function handleHint() {
 		if (hintsAvailable) {
@@ -76,6 +77,11 @@
 		change_testgrid();
 	}
 
+	function handleJumpToLatestBranch() {
+		if (!$gamePaused) {
+			history.jumpToLatestBranch();
+		}
+	}
 </script>
 
 <div class="action-buttons space-x-3">
@@ -89,6 +95,12 @@
 	<button class="btn btn-round" disabled={$gamePaused || !canRedo} on:click={handleRedo} title="Redo">
 		<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 90 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+		</svg>
+	</button>
+
+	<button class="btn btn-round" disabled={$gamePaused || !hasActiveBranches} on:click={handleJumpToLatestBranch} title="跳转到最新分支">
+		<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
 		</svg>
 	</button>
 

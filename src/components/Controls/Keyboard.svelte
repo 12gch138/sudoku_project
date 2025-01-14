@@ -32,10 +32,10 @@
 						
 						const newCandidates = [...currentCandidates, num].sort((a, b) => a - b);
 						candidates.add($cursor, num);
-						// 等待一下确保候选数已经更新
-						setTimeout(() => {
-							history.addBranchPoint(position, [num]);
-						}, 0);
+						// // 等待一下确保候选数已经更新
+						// setTimeout(() => {
+						// 	history.addBranchPoint(position, [num]);
+						// }, 0);
 					}
 				}
 				userGrid.set($cursor, 0);
