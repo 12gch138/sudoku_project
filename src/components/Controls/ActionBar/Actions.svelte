@@ -1,6 +1,6 @@
 <script>
 	import { candidates,iscandidates } from '@sudoku/stores/candidates';
-	import { userGrid } from '@sudoku/stores/grid';
+	import { userGrid,promptGrid } from '@sudoku/stores/grid';
 	import { cursor } from '@sudoku/stores/cursor';
 	import { hints } from '@sudoku/stores/hints';
 	import { notes } from '@sudoku/stores/notes';
@@ -8,7 +8,7 @@
 	import { settings } from '@sudoku/stores/settings';
 	import { keyboardDisabled } from '@sudoku/stores/keyboard';
 	import { gamePaused } from '@sudoku/stores/game';
-	import {updateUserGridFromCoordinates, updataCandidates, updateTest} from '@sudoku/stores/prompt';
+	import {updateUserGridFromCoordinates,change_testgrid} from '@sudoku/stores/prompt';
 
 	$: hintsAvailable = $hints > 0;
 
@@ -23,11 +23,12 @@
 	}
 
 	function setter(){
-		updataCandidates();
-		updateTest();
 		iscandidates.update(value=>true);
 		updateUserGridFromCoordinates();
 
+	}
+	function change(){
+		change_testgrid();
 	}
 
 </script>
@@ -40,7 +41,7 @@
 </svg>
     </button>
 
-	<button class="btn btn-round" disabled={$gamePaused} title="Undo">
+	<button class="btn btn-round" disabled={$gamePaused} on:click={change} title="Undo">
 		<svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
 		</svg>

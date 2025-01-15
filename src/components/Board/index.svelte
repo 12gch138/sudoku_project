@@ -1,22 +1,20 @@
 <script>
 	import { BOX_SIZE } from '@sudoku/constants';
 	import { gamePaused } from '@sudoku/stores/game';
-	import { grid, userGrid, invalidCells } from '@sudoku/stores/grid';
+	import { grid, userGrid, invalidCells,promptGrid } from '@sudoku/stores/grid';
 	import { settings } from '@sudoku/stores/settings';
 	import { cursor } from '@sudoku/stores/cursor';
 	import { candidates,iscandidates } from '@sudoku/stores/candidates';
 	import {promptCoordinates} from '@sudoku/stores/prompt';
 	import Cell from './Cell.svelte';
 
-
 	let is_candidates;
 	$:is_candidates=$iscandidates;
 
-
-
 	function isGreen(x, y) {
-    return $promptCoordinates.some(coord => coord.x === x && coord.y === y);
+    	return $promptCoordinates.some(coord => coord.x == x && coord.y == y);
   }
+
 
 	function isSelected(cursorStore, x, y) {
 		return cursorStore.x === x && cursorStore.y === y;
@@ -57,13 +55,12 @@
 					      disabled={$gamePaused}
 					      selected={isSelected($cursor, x, y)}
 					      userNumber={$grid[y][x] === 0}
-						  isGreen={is_candidates && isGreen(x,y)}
+						  isGreen={is_candidates && isGreen(x,y) && $promptCoordinates && !isSelected($cursor, x, y) && $promptGrid[y][x]===0}
 					      sameArea={$settings.highlightCells && !isSelected($cursor, x, y) && isSameArea($cursor, x, y)}
 					      sameNumber={$settings.highlightSame && value && !isSelected($cursor, x, y) && getValueAtCursor($userGrid, $cursor) === value}
 					      conflictingNumber={$settings.highlightConflicting && $grid[y][x] === 0 && $invalidCells.includes(x + ',' + y)} />
 				{/each}
 			{/each}
-
 		</div>
 
 	</div>
