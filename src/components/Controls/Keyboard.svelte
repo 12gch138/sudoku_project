@@ -51,6 +51,13 @@
 
 				userGrid.set($cursor, num);
 				promptGrid.set($cursor, num);
+				// 记录数字输入操作
+				history.push({
+					type: 'input',
+					position: { x: $cursor.x, y: $cursor.y },
+					oldValue,
+					newValue: num
+				});
 			}
 
 			if ($strategy_buttom) {
@@ -64,13 +71,6 @@
 			} else {
 				strategy_display.clear();
 				
-				// 记录数字输入操作
-				history.push({
-					type: 'input',
-					position: { x: $cursor.x, y: $cursor.y },
-					oldValue,
-					newValue: num
-				});
 			}
 		}
 	}
