@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { userGrid } from '@sudoku/stores/grid';
+import { userGrid, promptGrid } from '@sudoku/stores/grid';
 import { candidates } from '@sudoku/stores/candidates';
 
 // 历史记录结构
@@ -19,10 +19,12 @@ function createHistoryStore() {
     function createSnapshot() {
         const gridState = get(userGrid);
         const candidatesState = get(candidates);
+        const prompt_grid = get(promptGrid)
         
         return {
             grid: JSON.parse(JSON.stringify(gridState)),
-            candidates: JSON.parse(JSON.stringify(candidatesState))
+            candidates: JSON.parse(JSON.stringify(candidatesState)),
+            prompt: JSON.parse(JSON.stringify(prompt_grid))
         };
     }
 
@@ -37,9 +39,14 @@ function createHistoryStore() {
                 for (let y = 0; y < snapshot.grid.length; y++) {
                     for (let x = 0; x < snapshot.grid[y].length; x++) {
                         userGrid.set({ x, y }, snapshot.grid[y][x]);
+                        promptGrid.set({ x, y }, snapshot.prompt[y][x]);
                     }
                 }
             }
+
+            promptGrid.subscribe((grid)=>{
+                console.log(grid);
+            })
             
             // 恢复候选数状态
             if (snapshot.candidates) {
