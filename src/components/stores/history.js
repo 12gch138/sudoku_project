@@ -1,6 +1,7 @@
 import { writable, get } from 'svelte/store';
 import { userGrid, promptGrid } from '@sudoku/stores/grid';
 import { candidates } from '@sudoku/stores/candidates';
+import { manager } from "@sudoku/strategy/strategy_manager"
 
 // 历史记录结构
 const initialState = {
@@ -20,10 +21,12 @@ function createHistoryStore() {
         const gridState = get(userGrid);
         const candidatesState = get(candidates);
         const prompt_grid = get(promptGrid)
+        const CandidateBefore = manager.CandidateBefore;
         
         return {
             grid: JSON.parse(JSON.stringify(gridState)),
             candidates: JSON.parse(JSON.stringify(candidatesState)),
+            candidates_before: JSON.parse(JSON.stringify(CandidateBefore)),
             prompt: JSON.parse(JSON.stringify(prompt_grid))
         };
     }
@@ -43,6 +46,7 @@ function createHistoryStore() {
                     }
                 }
             }
+            manager.CandidateBefore = snapshot.CandidateBefore;
 
             promptGrid.subscribe((grid)=>{
                 console.log(grid);

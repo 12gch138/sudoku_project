@@ -12,7 +12,9 @@
 	$:is_candidates=$iscandidates;
 
 	function isGreen(x, y) { 
+		console.log($candidates);
     	return $promptCoordinates.some(coord => coord.x == x && coord.y == y && coord.value.length <= $candidate_len);
+		
   }
 
 

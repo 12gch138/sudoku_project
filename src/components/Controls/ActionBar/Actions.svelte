@@ -23,15 +23,17 @@
 			}
 
 			const oldValue = $userGrid[$cursor.y][$cursor.x];
+			const oldValue_prompt = $promptGrid[$cursor.y][$cursor.x];
 			userGrid.applyHint($cursor);
 			const newValue = $userGrid[$cursor.y][$cursor.x];
+			const newValue_prompt = $promptGrid[$cursor.y][$cursor.x];
 
 			// 记录操作历史
 			history.push({
 				type: 'hint',
 				position: { x: $cursor.x, y: $cursor.y },
 				oldValue,
-				newValue
+				newValue,
 			});
 		}
 	}
@@ -46,6 +48,7 @@
 				case 'hint':
 				case 'input':
 					userGrid.set({ x: action.position.x, y: action.position.y }, action.oldValue);
+					promptGrid.set({ x: action.position.x, y: action.position.y }, action.oldValue);
 					break;
 				// 可以添加其他类型的操作处理
 			}
@@ -62,6 +65,7 @@
 				case 'hint':
 				case 'input':
 					userGrid.set({ x: action.position.x, y: action.position.y }, action.newValue);
+					promptGrid.set({ x: action.position.x, y: action.position.y }, action.newValue);
 					break;
 				// 可以添加其他类型的操作处理
 			}
